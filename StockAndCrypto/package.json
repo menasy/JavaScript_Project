@@ -1,0 +1,36 @@
+{
+  "name": "stockandcrypto",
+  "version": "1.0.0",
+  "description": "A TypeScript-based web application that fetches and displays live data from cryptocurrency and stock market APIs.",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "serve": "npx http-server . -p 8080 -c-1",
+    "dev": "npx live-server --port=8080 --no-browser",
+    "start": "npm run build && npm run serve",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/menasy/JavaScript_Project.git"
+  },
+  "keywords": [
+    "TypeScript",
+    "Api",
+    "FinTech",
+    "Crypto",
+    "Stock",
+    "Web"
+  ],
+  "author": "menasy",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/menasy/JavaScript_Project/issues"
+  },
+  "homepage": "https://github.com/menasy/JavaScript_Project#readme",
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "live-server": "^1.2.2",
+    "typescript": "^5.0.0"
+  }
+}

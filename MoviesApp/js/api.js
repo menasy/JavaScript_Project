@@ -16,7 +16,7 @@ export async function getData(query = 'include_adult=false&page=1&sort_by=popula
 		if(response.ok)
 		{
 			const data = await response.json()
-			return data;
+			return data;	
 		}
 		else
 			throw new Error('Failed to fetch data');

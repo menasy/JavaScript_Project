@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ES2017",         
+    "lib": ["ES2017", "DOM"],   
+    "module": "ES2015",
+    "outDir": "./dist",
+    "rootDir": "./js",
+    "strict": true,
+    "esModuleInterop": true,
+    "allowJs": true,
+    "moduleResolution": "node",
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
+  },
+  "include": ["js/**/*"],
+  "exclude": ["node_modules", "dist"]
+}

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sembol Detayı</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <!-- Header -->
+    <header class="bg-gray-800 shadow-lg">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <a href="./index.html" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors">
+                        <i class="fas fa-arrow-left mr-2"></i>Ana Sayfa
+                    </a>
+                    <h1 class="text-2xl font-bold text-blue-400">
+                        <i class="fas fa-chart-line mr-2"></i>
+                        Sembol Detayı
+                    </h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm text-gray-300" id="lastUpdate">Son Güncelleme: --</span>
+                    <button id="refreshBtn" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors">
+                        <i class="fas fa-sync-alt"></i> Yenile
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-8">
+        <!-- Sembol Detail Card -->
+        <div class="bg-gray-800 rounded-xl p-6 shadow-xl mb-8">
+            <div id="stockFulLData">
+                <div class="text-center text-gray-400 py-8">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400 mx-auto mb-4"></div>
+                    <p>Sembol verileri yükleniyor...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Price Chart -->
+            <div class="bg-gray-800 rounded-xl p-6 shadow-xl">
+                <h2 class="text-xl font-semibold mb-6 flex items-center">
+                    <i class="fas fa-chart-line mr-2 text-blue-400"></i>
+                    Fiyat Grafiği
+                </h2>
+                <div class="h-80">
+                    <canvas id="priceChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Volume Chart -->
+            <div class="bg-gray-800 rounded-xl p-6 shadow-xl">
+                <h2 class="text-xl font-semibold mb-6 flex items-center">
+                    <i class="fas fa-chart-bar mr-2 text-green-400"></i>
+                    Hacim Grafiği
+                </h2>
+                <div class="h-80">
+                    <canvas id="volumeChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Info -->
+        <div class="bg-gray-800 rounded-xl p-6 shadow-xl mt-8">
+            <h2 class="text-xl font-semibold mb-6 flex items-center">
+                <i class="fas fa-info-circle mr-2 text-purple-400"></i>
+                Ek Bilgiler
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="additionalInfo">
+                <div class="bg-gray-700 p-4 rounded-lg">
+                    <p class="text-gray-400 text-sm">Piyasa Değeri</p>
+                    <p class="text-white text-lg font-bold" id="marketCap">--</p>
+                </div>
+                <div class="bg-gray-700 p-4 rounded-lg">
+                    <p class="text-gray-400 text-sm">Fiyat (USD)</p>
+                    <p class="text-white text-lg font-bold" id="priceUsd">--</p>
+                </div>
+                <div class="bg-gray-700 p-4 rounded-lg">
+                    <p class="text-gray-400 text-sm">24s Değişim</p>
+                    <p class="text-green-400 text-lg font-bold" id="change24h">--</p>
+                </div>
+                <div class="bg-gray-700 p-4 rounded-lg">
+                    <p class="text-gray-400 text-sm">Hacim</p>
+                    <p class="text-white text-lg font-bold" id="volume">--</p>
+                </div>
+                <div class="bg-gray-700 p-4 rounded-lg">
+                    <p class="text-gray-400 text-sm">Sıralama</p>
+                    <p class="text-white text-lg font-bold" id="rank">--</p>
+                </div>
+                <div class="bg-gray-700 p-4 rounded-lg">
+                    <p class="text-gray-400 text-sm">Açıklama</p>
+                    <p class="text-white text-sm" id="description">--</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-gray-800 rounded-xl p-8 text-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400 mx-auto mb-4"></div>
+            <p class="text-gray-300">Veriler yükleniyor...</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 mt-16">
+        <div class="container mx-auto px-6 py-8">
+            <div class="text-center text-gray-400">
+                <p>&copy; 2024 Stock & Crypto Dashboard. API ile güçlendirilmiştir.</p>
+                <p class="text-sm mt-2">Finansal veriler sadece bilgi amaçlıdır. Yatırım tavsiyesi değildir.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module">
+        // URL'den symbol parametresini al
+        const urlParams = new URLSearchParams(window.location.search);
+        const symbol = urlParams.get('symbol');
+        
+        if (symbol) {
+            // loadData fonksiyonunu çağır
+            import('../dist/main.js').then(module => {
+                if (module.default) {
+                    module.default(symbol);
+                }
+            });
+        } else {
+            document.getElementById('stockFulLData').innerHTML = `
+                <div class="text-center text-red-400 py-8">
+                    <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
+                    <p>Sembol bulunamadı!</p>
+                    <a href="./index.html" class="mt-4 inline-block bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors">
+                        Ana Sayfaya Dön
+                    </a>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

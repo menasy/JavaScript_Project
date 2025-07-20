@@ -1,0 +1,151 @@
+/* Custom animations and styles */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+* {
+    font-family: 'Inter', sans-serif;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #374151;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #6B7280;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #9CA3AF;
+}
+
+/* Smooth transitions */
+.transition-all {
+    transition: all 0.3s ease;
+}
+
+/* Hover effects */
+.hover-scale:hover {
+    transform: scale(1.02);
+}
+
+/* Loading animation */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.loading-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Glass effect */
+.glass {
+    backdrop-filter: blur(10px);
+    background: rgba(31, 41, 55, 0.8);
+    border: 1px solid rgba(75, 85, 99, 0.3);
+}
+
+/* Custom gradient backgrounds */
+.gradient-bg {
+    background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+}
+
+/* Responsive typography */
+@media (max-width: 768px) {
+    .text-responsive {
+        font-size: 0.875rem;
+    }
+}
+
+/* Chart container styling */
+#priceChart {
+    background: rgba(31, 41, 55, 0.5);
+    border-radius: 8px;
+}
+
+/* Animation for cards */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Success/Error states */
+.success-border {
+    border-left: 4px solid #10B981;
+}
+
+.error-border {
+    border-left: 4px solid #EF4444;
+}
+
+.warning-border {
+    border-left: 4px solid #F59E0B;
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    .grid-mobile {
+        grid-template-columns: 1fr;
+    }
+    
+    .text-mobile-sm {
+        font-size: 0.75rem;
+    }
+}
+
+/* Focus states for accessibility */
+input:focus,
+button:focus {
+    outline: 2px solid #60A5FA;
+    outline-offset: 2px;
+}
+
+/* Custom button styles */
+.btn-primary {
+    background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #2563EB 0%, #1E40AF 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+}
+
+/* Status indicators */
+.status-up {
+    color: #10B981;
+}
+
+.status-down {
+    color: #EF4444;
+}
+
+.status-neutral {
+    color: #6B7280;
+}
