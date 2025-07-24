@@ -2,11 +2,10 @@ import domElements from "./DomElement.js"
 import { apiLimitCounts } from "./apiData.js";
 import configFile from "./config.js";
 
-
 const refreshUpdateDate = () =>{
-	let date = new Date();
+    const date = new Date();
     if (domElements.lastUpdate)
-		domElements.lastUpdate.innerHTML = `Son Güncelleme: ${date}`;
+        domElements.lastUpdate.innerHTML = `Son Güncelleme: ${date.toLocaleString('tr-TR')}`;
 }
 
 function displayFullData(data: any) {
@@ -157,7 +156,7 @@ export function displayCryptoData(cryptoData: any) {
             `;
 			refreshUpdateDate();
             card.addEventListener('click', () => {
-                window.location.href = `./detailSeymbol.html?symbol=${coin.symbol}`;
+                window.location.href = `./detailSeymbol.html?query=${coin.id}`;
             });
             container.appendChild(card);
         });
@@ -166,5 +165,75 @@ export function displayCryptoData(cryptoData: any) {
     }
 }
 
+function displayDetailsCrypto(detailDataCrypto: any) 
+{
+    // Ek Bilgiler alanları domElements üzerinden
+    domElements.marketCapEl && (domElements.marketCapEl.textContent = detailDataCrypto.market_data?.market_cap?.usd?.toLocaleString() ?? '--');
+    domElements.priceUsdEl && (domElements.priceUsdEl.textContent = detailDataCrypto.market_data?.current_price?.usd?.toLocaleString() ?? '--');
+    const change = detailDataCrypto.market_data?.price_change_percentage_24h ?? null;
+    if (domElements.change24hEl) {
+        domElements.change24hEl.textContent = change !== null ? `${change.toFixed(2)}%` : '--';
+        domElements.change24hEl.className = `text-lg font-bold ${change >= 0 ? 'text-green-400' : 'text-red-400'}`;
+    }
+    domElements.volumeEl && (domElements.volumeEl.textContent = detailDataCrypto.market_data?.total_volume?.usd?.toLocaleString() ?? '--');
+    domElements.rankEl && (domElements.rankEl.textContent = detailDataCrypto.market_cap_rank?.toString() ?? '--');
+    let desc = detailDataCrypto.description?.tr || detailDataCrypto.description?.en || '';
+    domElements.descriptionEl && (domElements.descriptionEl.textContent = desc ? desc.replace(/<[^>]+>/g, '').slice(0, 300) : '--');
+    domElements.lastUpdateEl && detailDataCrypto.last_updated &&
+        (domElements.lastUpdateEl.textContent = `Son Güncelleme: ${new Date(detailDataCrypto.last_updated).toLocaleString('tr-TR')}`);
+
+    // Üst kart alanları domElements üzerinden
+    if (domElements.symbolImageEl && detailDataCrypto.image?.large) {
+        const imgEl = domElements.symbolImageEl as HTMLImageElement;
+        imgEl.src = detailDataCrypto.image.large;
+        imgEl.alt = detailDataCrypto.name;
+    }
+    if (domElements.symbolNameEl) {
+        domElements.symbolNameEl.textContent = `${detailDataCrypto.name} (${detailDataCrypto.symbol?.toUpperCase()})`;
+    }
+    domElements.priceUsdTopEl && (domElements.priceUsdTopEl.textContent = detailDataCrypto.market_data?.current_price?.usd?.toLocaleString() ?? '--');
+    if (domElements.homepageTopEl) {
+        const homepage = detailDataCrypto.links?.homepage?.[0] ?? '';
+        if (homepage) {
+            domElements.homepageTopEl.innerHTML = `<a href="${homepage}" target="_blank" class="underline text-white hover:text-blue-200">Web Sitesi</a>`;
+        } else {
+            domElements.homepageTopEl.textContent = 'Web Sitesi';
+        }
+    }
+
+    // Dolaşımdaki Arz
+    const supply = detailDataCrypto.market_data?.circulating_supply ?? '--';
+    domElements.circulatingSupplyEl && (domElements.circulatingSupplyEl.textContent = supply.toLocaleString());
+
+    // Ana bağlantı (alt bilgi)
+    const homepage = detailDataCrypto.links?.homepage?.[0] ?? '';
+    if (domElements.homepageLinkEl) {
+        domElements.homepageLinkEl.innerHTML = homepage
+            ? `<a href="${homepage}" target="_blank" class="underline hover:text-blue-600">${homepage}</a>`
+            : '--';
+    }
+    // Ana kartı doldurmak isterseniz:
+    const stockFullDataEl = document.getElementById('stockFulLData');
+    if (stockFullDataEl) {
+        stockFullDataEl.innerHTML = `
+            <div class="flex flex-col md:flex-row items-center gap-6">
+                <img src="${detailDataCrypto.image?.large}" alt="${detailDataCrypto.name}" class="w-24 h-24 rounded-full border-2 border-blue-400 shadow-lg mb-4 md:mb-0">
+                <div>
+                    <h2 class="text-3xl font-bold text-blue-400 mb-2">${detailDataCrypto.name} <span class="text-gray-400 text-xl">(${detailDataCrypto.symbol?.toUpperCase()})</span></h2>
+                    <p class="text-gray-300 mb-2">${desc ? desc.replace(/<[^>]+>/g, '').slice(0, 120) : ''}</p>
+                    <div class="flex flex-wrap gap-4 mt-2">
+                        <span class="bg-gray-700 px-3 py-1 rounded text-sm">Fiyat: $${detailDataCrypto.market_data?.current_price?.usd?.toLocaleString() ?? '--'}</span>
+                        <span class="bg-gray-700 px-3 py-1 rounded text-sm">Piyasa Değeri: $${detailDataCrypto.market_data?.market_cap?.usd?.toLocaleString() ?? '--'}</span>
+                        <span class="bg-gray-700 px-3 py-1 rounded text-sm">Sıralama: #${detailDataCrypto.market_cap_rank ?? '--'}</span>
+                        <span class="bg-gray-700 px-3 py-1 rounded text-sm">24s Değişim: ${change !== null ? `${change.toFixed(2)}%` : '--'}</span>
+                        <span class="bg-gray-700 px-3 py-1 rounded text-sm">Dolaşımdaki Arz: ${supply}</span>
+                        ${homepage ? `<a href="${homepage}" target="_blank" class="bg-blue-700 px-3 py-1 rounded text-sm text-white hover:bg-blue-800">Web Sitesi</a>` : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+}
+
 // Export the function for use in other modules
-export { displayFullData, displayData, updateApiLimitUI };
+export { displayFullData, displayData, updateApiLimitUI, displayDetailsCrypto };

@@ -1,7 +1,7 @@
 import { getData, getCryptoData} from './apiData.js';
 import domElements from './DomElement.js';
 import { displayFullData, displayData, updateApiLimitUI, displayCryptoData }  from './ui.js'
-
+import { loadCoinData } from './details.js';
 const stockTickers: string[] = [
     "AAPL",      // Apple
     "MSFT",      // Microsoft
@@ -47,9 +47,9 @@ async function loadFullData() {
     }
 }
 
-async function loadCryptData(search: string ="search/trending") {
+async function loadCryptData() {
   try {
-    const data = await getCryptoData(search);
+    const data = await getCryptoData();
     displayCryptoData(data);
 
   } catch (error) {
@@ -58,7 +58,7 @@ async function loadCryptData(search: string ="search/trending") {
 }
 
 
-function showErrorMessage(message: string) {
+export function showErrorMessage(message: string) {
     const container = document.getElementById("stockFulLData");
     if (container) {
         container.innerHTML = `
@@ -89,7 +89,7 @@ function butHandler(event: Event)
 			if (btn.id === "searchStockBtn")
 				loadData(input);
 			else if (btn.id === "searchCryptoBtn")
-				loadCryptData(input);
+                window.location.href = `./detailSeymbol.html?query=${input}`;
 		}catch(error){
 			showErrorMessage("Error: " + error);
 		}

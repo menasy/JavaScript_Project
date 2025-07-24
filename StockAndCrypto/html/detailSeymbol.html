@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sembol Detayı</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css">
 </head>
@@ -35,43 +34,20 @@
 
     <!-- Main Content -->
     <main class="container mx-auto px-6 py-8">
-        <!-- Sembol Detail Card -->
-        <div class="bg-gray-800 rounded-xl p-6 shadow-xl mb-8">
-            <div id="stockFulLData">
-                <div class="text-center text-gray-400 py-8">
-                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400 mx-auto mb-4"></div>
-                    <p>Sembol verileri yükleniyor...</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Charts Section -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <!-- Price Chart -->
-            <div class="bg-gray-800 rounded-xl p-6 shadow-xl">
-                <h2 class="text-xl font-semibold mb-6 flex items-center">
-                    <i class="fas fa-chart-line mr-2 text-blue-400"></i>
-                    Fiyat Grafiği
-                </h2>
-                <div class="h-80">
-                    <canvas id="priceChart"></canvas>
-                </div>
-            </div>
-
-            <!-- Volume Chart -->
-            <div class="bg-gray-800 rounded-xl p-6 shadow-xl">
-                <h2 class="text-xl font-semibold mb-6 flex items-center">
-                    <i class="fas fa-chart-bar mr-2 text-green-400"></i>
-                    Hacim Grafiği
-                </h2>
-                <div class="h-80">
-                    <canvas id="volumeChart"></canvas>
+        <!-- Sembol Detail Card (Üst Kart) -->
+        <div class="bg-gray-800 rounded-xl p-6 shadow-xl mb-8 flex flex-col md:flex-row items-center gap-6">
+            <img id="symbolImage" src="" alt="" class="w-24 h-24 rounded-full border-2 border-blue-400 shadow-lg mb-4 md:mb-0">
+            <div>
+                <h2 class="text-3xl font-bold text-blue-400 mb-2" id="symbolName"></h2>
+                <div class="flex flex-wrap gap-4 mt-2">
+                    <span class="bg-gray-700 px-3 py-1 rounded text-sm">Fiyat: $<span id="priceUsdTop">--</span></span>
+                    <span class="bg-blue-700 px-3 py-1 rounded text-sm text-white hover:bg-blue-800" id="homepageTop">Web Sitesi</span>
                 </div>
             </div>
         </div>
 
         <!-- Additional Info -->
-        <div class="bg-gray-800 rounded-xl p-6 shadow-xl mt-8">
+        <div class="bg-gray-800 rounded-xl p-6 shadow-xl mt-8" id="additionalInfoSection">
             <h2 class="text-xl font-semibold mb-6 flex items-center">
                 <i class="fas fa-info-circle mr-2 text-purple-400"></i>
                 Ek Bilgiler
@@ -80,10 +56,6 @@
                 <div class="bg-gray-700 p-4 rounded-lg">
                     <p class="text-gray-400 text-sm">Piyasa Değeri</p>
                     <p class="text-white text-lg font-bold" id="marketCap">--</p>
-                </div>
-                <div class="bg-gray-700 p-4 rounded-lg">
-                    <p class="text-gray-400 text-sm">Fiyat (USD)</p>
-                    <p class="text-white text-lg font-bold" id="priceUsd">--</p>
                 </div>
                 <div class="bg-gray-700 p-4 rounded-lg">
                     <p class="text-gray-400 text-sm">24s Değişim</p>
@@ -96,6 +68,10 @@
                 <div class="bg-gray-700 p-4 rounded-lg">
                     <p class="text-gray-400 text-sm">Sıralama</p>
                     <p class="text-white text-lg font-bold" id="rank">--</p>
+                </div>
+                <div class="bg-gray-700 p-4 rounded-lg">
+                    <p class="text-gray-400 text-sm">Dolaşımdaki Arz</p>
+                    <p class="text-white text-lg font-bold" id="circulatingSupply">--</p>
                 </div>
                 <div class="bg-gray-700 p-4 rounded-lg">
                     <p class="text-gray-400 text-sm">Açıklama</p>
@@ -123,29 +99,30 @@
         </div>
     </footer>
 
-    <script type="module">
-        // URL'den symbol parametresini al
-        const urlParams = new URLSearchParams(window.location.search);
-        const symbol = urlParams.get('symbol');
-        
-        if (symbol) {
-            // loadData fonksiyonunu çağır
-            import('../dist/main.js').then(module => {
-                if (module.default) {
-                    module.default(symbol);
-                }
-            });
-        } else {
-            document.getElementById('stockFulLData').innerHTML = `
-                <div class="text-center text-red-400 py-8">
-                    <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
-                    <p>Sembol bulunamadı!</p>
-                    <a href="./index.html" class="mt-4 inline-block bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors">
-                        Ana Sayfaya Dön
-                    </a>
-                </div>
-            `;
-        }
-    </script>
+    <script type="module" src="../dist/details.js"></script>
+</body>
+</html>
+        </div>
+    </footer>
+
+    <script type="module" src="../dist/details.js"></script>
+</body>
+</html>
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400 mx-auto mb-4"></div>
+            <p class="text-gray-300">Veriler yükleniyor...</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 mt-16">
+        <div class="container mx-auto px-6 py-8">
+            <div class="text-center text-gray-400">
+                <p>&copy; 2024 Stock & Crypto Dashboard. API ile güçlendirilmiştir.</p>
+                <p class="text-sm mt-2">Finansal veriler sadece bilgi amaçlıdır. Yatırım tavsiyesi değildir.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module" src="../dist/details.js"></script>
 </body>
 </html>

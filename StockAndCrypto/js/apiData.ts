@@ -1,4 +1,4 @@
-import configFile  from './config.js';
+import configFile from "./config.js";
 export let apiLimitCounts = 0;
 export async function getData(query:string = "&symbols=AAPL")
 {
@@ -26,9 +26,10 @@ export async function getData(query:string = "&symbols=AAPL")
 	}
 }
 
-export async function getCryptoData(query:string = "search/trending")
-{
-	let fulpath:string = configFile.config.CRYPTO_BASE_URL + query + `?x_cg_demo_api_key=${configFile.config.CRYPTO_API_KEY}`;
+export async function getCryptoData(query:string = "search/trending?")
+{	
+
+	let fulpath:string = configFile.config.CRYPTO_BASE_URL + query + `x_cg_demo_api_key=${configFile.config.CRYPTO_API_KEY}`;
 	console.log("PATH->", fulpath);
 	try{
 		const response = await fetch(fulpath,configFile.options);
