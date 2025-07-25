@@ -1,5 +1,5 @@
 const domElements = {
-	stockFulLData: document.getElementById("stockFulLData"),
+	stockFullData: document.getElementById("stockFullData"),
 	cryptoFullData: document.getElementById("cryptoData"),
 	symbolInput: document.getElementById("symbolInput"),
 	searchStock: document.getElementById("searchStockBtn"),
@@ -19,8 +19,17 @@ const domElements = {
 	symbolNameEl: document.getElementById('symbolName'),
 	priceUsdTopEl: document.getElementById('priceUsdTop'),
 	homepageTopEl: document.getElementById('homepageTop'),
-
-
+	companyNameEl: document.getElementById('companyName'),
+	companyExchangeEl: document.getElementById('companyExchange'),
+	companyIndustryEl: document.getElementById('companyIndustry'),
+	companyMarketCapEl: document.getElementById('companyMarketCap'),
+	companyOutstandingEl: document.getElementById('companyOutstanding'),
+	companyIpoEl: document.getElementById('companyIpo'),
+	companyPhoneEl: document.getElementById('companyPhone'),
+	companyWebUrlEl: document.getElementById('companyWebUrl'),
+	companyTickerEl: document.getElementById('companyTicker'),
+	companyCountryEl: document.getElementById('companyCountry'),
+	companyCurrencyEl: document.getElementById('companyCurrency'),
 };
 
 export default domElements;

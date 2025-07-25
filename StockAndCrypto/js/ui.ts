@@ -9,12 +9,46 @@ const refreshUpdateDate = () =>{
 }
 
 function displayFullData(data: any) {
-    if (!data || !domElements.stockFulLData) {
+    if (!data || !domElements.stockFullData) {
         console.error("No data or container not found");
         return;
     }
-	const stockData = domElements.stockFulLData;
+    const stockData = domElements.stockFullData;
     stockData.innerHTML = '';
+
+    // Stockları kart şeklinde, displayCryptoData gibi göster
+    if (Array.isArray(data) && data.length > 0 && data[0].symbol && data[0].description) {
+        data.forEach((stock: any) => {
+            const card = document.createElement('div');
+            card.className = 'bg-gray-800 rounded-xl p-4 border border-gray-700 mb-4 cursor-pointer hover:scale-105 transition-all flex items-center shadow-lg';
+            card.innerHTML = `
+                <div class="flex-1">
+                    <div class="flex items-center justify-between">
+                        <span class="text-lg font-bold text-white">${stock.symbol}</span>
+                        <span class="text-xs px-2 py-1 rounded bg-gray-700 text-gray-300">${stock.type ?? '--'}</span>
+                    </div>
+                    <div class="mt-2">
+                        <span class="text-sm text-gray-300">${stock.description ?? '--'}</span>
+                    </div>
+                    <div class="flex flex-wrap gap-3 mt-2 text-xs text-gray-400">
+                        <span>Borsa: ${stock.mic ?? '--'}</span>
+                        <span>Döviz: ${stock.currency ?? '--'}</span>
+                        <span>FIGI: ${stock.figi ?? '--'}</span>
+                        ${stock.displaySymbol ? `<span>Görüntüleme Sembolü: ${stock.displaySymbol}</span>` : ''}
+                    </div>
+                </div>
+                <div class="ml-4 flex flex-col items-end">
+                    <button class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-white text-sm mt-2">Detay</button>
+                </div>
+            `;
+            card.addEventListener('click', () => {
+                window.location.href = `./detailStock.html?symbol=${stock.symbol}`;
+            });
+            stockData.appendChild(card);
+        });
+        refreshUpdateDate();
+        return;
+    }
 
     if (data.data && Array.isArray(data.data)) {
         const stockMap = new Map();
@@ -51,7 +85,7 @@ function displayFullData(data: any) {
             `;
             refreshUpdateDate();
             stockCard.addEventListener('click', () => {
-                window.location.href = `./detailSeymbol.html?symbol=${stock.symbol}`;
+                window.location.href = `./detailStock.html?symbol=${stock.symbol}`;
             });
             stockData.appendChild(stockCard);
         });
@@ -59,55 +93,7 @@ function displayFullData(data: any) {
 }
 
 function displayData(oneData: any) {
-    if (!oneData || !domElements.stockFulLData) {
-        console.error("Veri bulunamadı veya konteyner bulunamadı");
-        return;
-    }
-    
-    const stockData = domElements.stockFulLData;
-    stockData.innerHTML = '';
-    
-    if (oneData.data && oneData.data.length > 0) {
-        const stock = oneData.data[0];
-        const change = stock.close - stock.open;
-        const changePercent = stock.open !== 0 ? ((change / stock.open) * 100).toFixed(2) : '0.00';
-        const changeColor = change >= 0 ? 'text-green-400' : 'text-red-400';
-        
-        stockData.innerHTML = `
-            <div class="bg-gray-700 rounded-lg p-6 border border-gray-600">
-                <div class="text-center mb-6">
-                    <h1 class="text-3xl font-bold text-white">${stock.symbol}</h1>
-                    <p class="text-lg text-gray-300">${stock.exchange}</p>
-                    <p class="text-4xl font-bold text-white mt-2">$${stock.close.toFixed(2)}</p>
-                    <p class="text-lg ${changeColor}">${change >= 0 ? '+' : ''}${change.toFixed(2)} (${change >= 0 ? '+' : ''}${changePercent}%)</p>
-                </div>
-                
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="bg-gray-800 p-4 rounded-lg">
-                        <p class="text-gray-400 text-sm">Açılış</p>
-                        <p class="text-white text-xl font-bold">$${stock.open.toFixed(2)}</p>
-                    </div>
-                    <div class="bg-gray-800 p-4 rounded-lg">
-                        <p class="text-gray-400 text-sm">Yüksek</p>
-                        <p class="text-green-400 text-xl font-bold">$${stock.high.toFixed(2)}</p>
-                    </div>
-                    <div class="bg-gray-800 p-4 rounded-lg">
-                        <p class="text-gray-400 text-sm">Düşük</p>
-                        <p class="text-red-400 text-xl font-bold">$${stock.low.toFixed(2)}</p>
-                    </div>
-                    <div class="bg-gray-800 p-4 rounded-lg">
-                        <p class="text-gray-400 text-sm">Hacim</p>
-                        <p class="text-white text-xl font-bold">${stock.volume.toLocaleString()}</p>
-                    </div>
-                </div>
-                
-                <div class="mt-6 text-center">
-                    <p class="text-gray-400 text-sm">Son Güncelleme: ${new Date(stock.date).toLocaleDateString('tr-TR')}</p>
-                </div>
-            </div>
-        `;
-		refreshUpdateDate();
-    }
+  
 }
 
 function updateApiLimitUI() {
@@ -213,7 +199,7 @@ function displayDetailsCrypto(detailDataCrypto: any)
             : '--';
     }
     // Ana kartı doldurmak isterseniz:
-    const stockFullDataEl = document.getElementById('stockFulLData');
+    const stockFullDataEl = document.getElementById('stockFullData');
     if (stockFullDataEl) {
         stockFullDataEl.innerHTML = `
             <div class="flex flex-col md:flex-row items-center gap-6">
@@ -235,5 +221,44 @@ function displayDetailsCrypto(detailDataCrypto: any)
     }
 }
 
+function displayDetailsStock(detailDataStock: any) {
+    if (!detailDataStock) return;
+
+    // Logo ve üst kart
+    if (domElements.symbolImageEl) {
+        (domElements.symbolImageEl as HTMLImageElement).src = detailDataStock.logo ?? "";
+        (domElements.symbolImageEl as HTMLImageElement).alt = detailDataStock.ticker ?? "";
+    }
+    if (domElements.companyNameEl) {
+        domElements.companyNameEl.textContent = detailDataStock.name ?? "--";
+    }
+    domElements.companyExchangeEl && (domElements.companyExchangeEl.textContent = detailDataStock.exchange ?? "--");
+    domElements.companyIndustryEl && (domElements.companyIndustryEl.textContent = detailDataStock.finnhubIndustry ?? "--");
+    if (domElements.companyWebUrlEl) {
+        domElements.companyWebUrlEl.textContent = "Web Sitesi";
+        domElements.companyWebUrlEl.setAttribute("href", detailDataStock.weburl ?? "#");
+    }
+
+    // Şirket temel bilgileri
+    domElements.companyTickerEl && (domElements.companyTickerEl.textContent = detailDataStock.ticker ?? "--");
+    domElements.companyCountryEl && (domElements.companyCountryEl.textContent = detailDataStock.country ?? "--");
+    domElements.companyCurrencyEl && (domElements.companyCurrencyEl.textContent = detailDataStock.currency ?? "--");
+    domElements.companyMarketCapEl && (domElements.companyMarketCapEl.textContent =
+        detailDataStock.marketCapitalization !== undefined
+            ? detailDataStock.marketCapitalization.toLocaleString('en-US', { maximumFractionDigits: 2 }) + ' M'
+            : '--'
+    );
+    domElements.companyOutstandingEl && (domElements.companyOutstandingEl.textContent =
+        detailDataStock.shareOutstanding !== undefined
+            ? detailDataStock.shareOutstanding.toLocaleString('en-US', { maximumFractionDigits: 2 })
+            : '--'
+    );
+    domElements.companyIpoEl && (domElements.companyIpoEl.textContent = detailDataStock.ipo ?? "--");
+    domElements.companyPhoneEl && (domElements.companyPhoneEl.textContent = detailDataStock.phone ?? "--");
+
+    // Son güncelleme
+    domElements.lastUpdateEl && (domElements.lastUpdateEl.textContent = `Son Güncelleme: ${new Date().toLocaleString('tr-TR')}`);
+}
+
 // Export the function for use in other modules
-export { displayFullData, displayData, updateApiLimitUI, displayDetailsCrypto };
+export { displayFullData, displayData, updateApiLimitUI, displayDetailsCrypto, displayDetailsStock};

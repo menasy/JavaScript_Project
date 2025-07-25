@@ -2,19 +2,10 @@ import { getData, getCryptoData} from './apiData.js';
 import domElements from './DomElement.js';
 import { displayFullData, displayData, updateApiLimitUI, displayCryptoData }  from './ui.js'
 import { loadCoinData } from './details.js';
-const stockTickers: string[] = [
-    "AAPL",      // Apple
-    "MSFT",      // Microsoft
-    "GOOGL",     // Alphabet
-    "AMZN",      // Amazon
-    "TSLA",      // Tesla
-];
-
-const defaulQuery:string = "&symbols=";
 
 async function loadData(search: string) {
   try {
-    const symbolQuery = defaulQuery + search;
+    const symbolQuery = "stock/profile2?symbol=" + search;
     const data = await getData(symbolQuery);
     displayData(data);
 
@@ -26,22 +17,15 @@ async function loadData(search: string) {
 
 async function loadFullData() {
     try {
-        console.log("Hisse senedi verileri yükleniyor...");
-        const queryPromises = stockTickers.map(symbol => {
-            const symbolQuery = defaulQuery + symbol;
-            return getData(symbolQuery);
-        });
-        const dataArray = await Promise.all(queryPromises);
-        console.log("Tüm veriler:", dataArray);       
-       if (dataArray && dataArray.length > 0)
-	   {
-		   displayFullData(dataArray);
-		
-      		updateApiLimitUI();
-	   }
+        let data = await getData();
+        if (data)
+        {
+            const firstTen = Array.isArray(data) ? data.slice(0, 10) : data;
+            displayFullData(firstTen);
+            updateApiLimitUI();
+        }
         else 
             showErrorMessage("Hisse senedi verileri yüklenemedi. Lütfen daha sonra tekrar deneyin.");
-        
     } catch (error) {
         console.log("Error: ", error);
     }
@@ -87,7 +71,7 @@ function butHandler(event: Event)
 		try{
 			const btn = event.currentTarget as HTMLElement;
 			if (btn.id === "searchStockBtn")
-				loadData(input);
+                window.location.href = `./detailStock.html?symbol=${input}`;
 			else if (btn.id === "searchCryptoBtn")
                 window.location.href = `./detailSeymbol.html?query=${input}`;
 		}catch(error){
@@ -103,5 +87,6 @@ domElements.refreshBtn?.addEventListener('click', () =>{
 	loadCryptData();
 })
 loadCryptData();
-// loadFullData();
+loadFullData();
 export default loadData;
+

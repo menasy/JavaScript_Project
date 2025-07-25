@@ -1,6 +1,8 @@
 import configFile from "./config.js";
 export let apiLimitCounts = 0;
-export async function getData(query:string = "&symbols=AAPL")
+
+
+export async function getData(query:string = "stock/symbol?exchange=US&")
 {
 	if (apiLimitCounts == configFile.config.API_LIMIT)
 	{
@@ -8,10 +10,10 @@ export async function getData(query:string = "&symbols=AAPL")
 		return;
 	}
 
-	let fulpath:string = configFile.config.BASE_URL + `access_key=${configFile.config.API_KEY}`+ query;
+	let fulpath:string = configFile.config.BASE_URL + query + `token=${configFile.config.API_KEY}`;
 	console.log(fulpath);
 	try{
-		const response = await fetch(fulpath,configFile.options);
+		const response = await fetch(fulpath,configFile.optionsStock);
 		if (response.ok)
 		{
 			const data = await response.json();
@@ -29,10 +31,10 @@ export async function getData(query:string = "&symbols=AAPL")
 export async function getCryptoData(query:string = "search/trending?")
 {	
 
-	let fulpath:string = configFile.config.CRYPTO_BASE_URL + query + `x_cg_demo_api_key=${configFile.config.CRYPTO_API_KEY}`;
+	let fulpath:string = configFile.config.CRYPTO_BASE_URL + query;
 	console.log("PATH->", fulpath);
 	try{
-		const response = await fetch(fulpath,configFile.options);
+		const response = await fetch(fulpath,configFile.optionsCrypto);
 		if (response.ok)
 		{
 			const data = await response.json();
