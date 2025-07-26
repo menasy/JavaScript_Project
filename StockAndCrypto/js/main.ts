@@ -1,26 +1,14 @@
 import { getData, getCryptoData} from './apiData.js';
 import domElements from './DomElement.js';
-import { displayFullData, displayData, updateApiLimitUI, displayCryptoData }  from './ui.js'
-import { loadCoinData } from './details.js';
+import { displayFullData, updateApiLimitUI, displayCryptoData }  from './ui.js'
 
-async function loadData(search: string) {
-  try {
-    const symbolQuery = "stock/profile2?symbol=" + search;
-    const data = await getData(symbolQuery);
-    displayData(data);
-
-	updateApiLimitUI();
-  } catch (error) {
-    console.log("Error: ", error);
-  }
-}
-
+updateApiLimitUI();
 async function loadFullData() {
     try {
         let data = await getData();
         if (data)
         {
-            const firstTen = Array.isArray(data) ? data.slice(0, 10) : data;
+            const firstTen = Array.isArray(data) ? data.slice(0, 15) : data;
             displayFullData(firstTen);
             updateApiLimitUI();
         }
@@ -73,7 +61,7 @@ function butHandler(event: Event)
 			if (btn.id === "searchStockBtn")
                 window.location.href = `./detailStock.html?symbol=${input}`;
 			else if (btn.id === "searchCryptoBtn")
-                window.location.href = `./detailSeymbol.html?query=${input}`;
+                window.location.href = `./detailCrypto.html?query=${input}`;
 		}catch(error){
 			showErrorMessage("Error: " + error);
 		}
@@ -88,5 +76,4 @@ domElements.refreshBtn?.addEventListener('click', () =>{
 })
 loadCryptData();
 loadFullData();
-export default loadData;
 

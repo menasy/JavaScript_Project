@@ -1,5 +1,5 @@
 import domElements from "./DomElement.js"
-import { apiLimitCounts } from "./apiData.js";
+import { apiLimitCounts } from "./ApiCount.js";
 import configFile from "./config.js";
 
 const refreshUpdateDate = () =>{
@@ -16,7 +16,6 @@ function displayFullData(data: any) {
     const stockData = domElements.stockFullData;
     stockData.innerHTML = '';
 
-    // Stockları kart şeklinde, displayCryptoData gibi göster
     if (Array.isArray(data) && data.length > 0 && data[0].symbol && data[0].description) {
         data.forEach((stock: any) => {
             const card = document.createElement('div');
@@ -92,10 +91,6 @@ function displayFullData(data: any) {
     }
 }
 
-function displayData(oneData: any) {
-  
-}
-
 function updateApiLimitUI() {
     const apiCallsEl = document.getElementById('apiCalls');
     if (apiCallsEl) {
@@ -140,9 +135,9 @@ export function displayCryptoData(cryptoData: any) {
                     </div>
                 </div>
             `;
-			refreshUpdateDate();
+            refreshUpdateDate();
             card.addEventListener('click', () => {
-                window.location.href = `./detailSeymbol.html?query=${coin.id}`;
+                window.location.href = `./detailCrypto.html?query=${coin.id}`;
             });
             container.appendChild(card);
         });
@@ -153,7 +148,6 @@ export function displayCryptoData(cryptoData: any) {
 
 function displayDetailsCrypto(detailDataCrypto: any) 
 {
-    // Ek Bilgiler alanları domElements üzerinden
     domElements.marketCapEl && (domElements.marketCapEl.textContent = detailDataCrypto.market_data?.market_cap?.usd?.toLocaleString() ?? '--');
     domElements.priceUsdEl && (domElements.priceUsdEl.textContent = detailDataCrypto.market_data?.current_price?.usd?.toLocaleString() ?? '--');
     const change = detailDataCrypto.market_data?.price_change_percentage_24h ?? null;
@@ -168,7 +162,6 @@ function displayDetailsCrypto(detailDataCrypto: any)
     domElements.lastUpdateEl && detailDataCrypto.last_updated &&
         (domElements.lastUpdateEl.textContent = `Son Güncelleme: ${new Date(detailDataCrypto.last_updated).toLocaleString('tr-TR')}`);
 
-    // Üst kart alanları domElements üzerinden
     if (domElements.symbolImageEl && detailDataCrypto.image?.large) {
         const imgEl = domElements.symbolImageEl as HTMLImageElement;
         imgEl.src = detailDataCrypto.image.large;
@@ -187,18 +180,15 @@ function displayDetailsCrypto(detailDataCrypto: any)
         }
     }
 
-    // Dolaşımdaki Arz
     const supply = detailDataCrypto.market_data?.circulating_supply ?? '--';
     domElements.circulatingSupplyEl && (domElements.circulatingSupplyEl.textContent = supply.toLocaleString());
 
-    // Ana bağlantı (alt bilgi)
     const homepage = detailDataCrypto.links?.homepage?.[0] ?? '';
     if (domElements.homepageLinkEl) {
         domElements.homepageLinkEl.innerHTML = homepage
             ? `<a href="${homepage}" target="_blank" class="underline hover:text-blue-600">${homepage}</a>`
             : '--';
     }
-    // Ana kartı doldurmak isterseniz:
     const stockFullDataEl = document.getElementById('stockFullData');
     if (stockFullDataEl) {
         stockFullDataEl.innerHTML = `
@@ -224,7 +214,6 @@ function displayDetailsCrypto(detailDataCrypto: any)
 function displayDetailsStock(detailDataStock: any) {
     if (!detailDataStock) return;
 
-    // Logo ve üst kart
     if (domElements.symbolImageEl) {
         (domElements.symbolImageEl as HTMLImageElement).src = detailDataStock.logo ?? "";
         (domElements.symbolImageEl as HTMLImageElement).alt = detailDataStock.ticker ?? "";
@@ -239,7 +228,6 @@ function displayDetailsStock(detailDataStock: any) {
         domElements.companyWebUrlEl.setAttribute("href", detailDataStock.weburl ?? "#");
     }
 
-    // Şirket temel bilgileri
     domElements.companyTickerEl && (domElements.companyTickerEl.textContent = detailDataStock.ticker ?? "--");
     domElements.companyCountryEl && (domElements.companyCountryEl.textContent = detailDataStock.country ?? "--");
     domElements.companyCurrencyEl && (domElements.companyCurrencyEl.textContent = detailDataStock.currency ?? "--");
@@ -256,9 +244,39 @@ function displayDetailsStock(detailDataStock: any) {
     domElements.companyIpoEl && (domElements.companyIpoEl.textContent = detailDataStock.ipo ?? "--");
     domElements.companyPhoneEl && (domElements.companyPhoneEl.textContent = detailDataStock.phone ?? "--");
 
-    // Son güncelleme
     domElements.lastUpdateEl && (domElements.lastUpdateEl.textContent = `Son Güncelleme: ${new Date().toLocaleString('tr-TR')}`);
+	
+}
+function showErrorMessageInStockDetails(message: string) {
+    const mainContent = document.querySelector('main');
+    if (mainContent) {
+        mainContent.innerHTML = `
+            <div class="flex flex-col items-center justify-center min-h-[60vh]">
+                <i class="fas fa-exclamation-triangle text-6xl text-red-500 mb-4"></i>
+                <h2 class="text-2xl font-bold text-red-400 mb-2">Hisse Bulunamadı</h2>
+                <p class="text-gray-300 mb-4">${message || 'Aradığınız hisse senedi bulunamadı.'}</p>
+                <a href="index.html" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors">
+                    <i class="fas fa-arrow-left mr-2"></i>Ana Sayfaya Dön
+                </a>
+            </div>
+        `;
+    }
 }
 
+function showErrorMessageInCoinDetails(message: string) {
+    const mainContent = document.querySelector('main');
+    if (mainContent) {
+        mainContent.innerHTML = `
+            <div class="flex flex-col items-center justify-center min-h-[60vh]">
+                <i class="fas fa-exclamation-triangle text-6xl text-orange-500 mb-4"></i>
+                <h2 class="text-2xl font-bold text-orange-400 mb-2">Kripto Para Bulunamadı</h2>
+                <p class="text-gray-300 mb-4">${message || 'Aradığınız kripto para bulunamadı.'}</p>
+                <a href="index.html" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors">
+                    <i class="fas fa-arrow-left mr-2"></i>Ana Sayfaya Dön
+                </a>
+            </div>
+        `;
+    }
+}
 // Export the function for use in other modules
-export { displayFullData, displayData, updateApiLimitUI, displayDetailsCrypto, displayDetailsStock};
+export { displayFullData , updateApiLimitUI, displayDetailsCrypto, displayDetailsStock, showErrorMessageInCoinDetails , showErrorMessageInStockDetails };

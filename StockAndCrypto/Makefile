@@ -1,17 +1,10 @@
-# Makefile
-
-# TypeScript derleyici
 TSC = tsc
-
-# Kaynak ve çıktı dizinleri
 SRC_DIR = js
 DIST_DIR = dist
 
-# Default hedef
-all: build
+all: compile
 
-# .ts dosyalarını derleyip .js dosyası üret
-build: $(NODE_MODULES) init-ts
+compile: $(NODE_MODULES) init-ts
 	@if [ -f $(TSCONFIG) ]; then \
 		npx tsc; \
 	else \
@@ -19,23 +12,28 @@ build: $(NODE_MODULES) init-ts
 		npx tsc js/*.ts --outDir $(JS_OUT) --target es2020 --module es6 --lib es2020,dom --moduleResolution node; \
 	fi
 
-# Serve files with HTTP server to avoid CORS
-serve: build
+build: $(NODE_MODULES) init-ts
+	@if [ -f $(TSCONFIG) ]; then \
+		npx tsc; \
+	else \
+		mkdir -p $(JS_OUT); \
+		npx tsc js/*.ts --outDir $(JS_OUT) --target es2020 --module es6 --lib es2020,dom --moduleResolution node; \
+	fi
+	@echo "Build tamamlandı, live server başlatılıyor..."
+	@npx live-server --port=8080 --open=html/index.html &
+
+serve: compile
 	npx http-server . -p 8080 -c-1
 
-# Development with live server
 dev-serve: $(NODE_MODULES)
 	npx live-server --port=8080 --no-browser
 
-# Çıktı dosyalarını temizler
 clean:
 	rm -rf $(DIST_DIR)
 
-# Hem temizler hem yeniden derler
-rebuild: clean build
+rebuild: clean compile
 
-# Derleyip programı çalıştırır
-run: build
+run: compile
 	node $(DIST_DIR)/main.js
 
-.PHONY: all install init-ts build run dev serve dev-serve clean clean-all rebuild
+.PHONY: all install init-ts compile build run dev serve dev-serve clean clean-all rebuild
